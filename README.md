@@ -1,455 +1,616 @@
-<!DOCTYPE html>
+
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculadora Completa - AnthZz</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora BerMatMods</title>
+  <!-- Fuente Poppins (gruesa y moderna) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      --screen-bg: rgba(0, 0, 0, 0.8);
-      --screen-text: #00f3ff;
-      --btn-basic: #2c2c3e;
-      --btn-sci: #4a3a7d;
-      --btn-special: #ff2a6d;
-      --btn-equals: #00f3ff;
-      --text: #ffffff;
-      --error: #ff5555;
-      --history-bg: rgba(30, 30, 50, 0.85);
-      --credits-bg: rgba(20, 20, 40, 0.9);
-    }
-
-    .light-mode {
-      --bg: linear-gradient(135deg, #f8f9ff, #e0e7ff);
-      --screen-bg: rgba(250, 250, 255, 0.95);
-      --screen-text: #0066cc;
-      --btn-basic: #d5d9f0;
-      --btn-sci: #b8a9e0;
-      --btn-special: #ff6b9d;
-      --btn-equals: #00ccff;
-      --text: #1a1a2e;
-      --error: #ff3333;
-      --history-bg: rgba(245, 245, 255, 0.9);
-      --credits-bg: rgba(240, 240, 255, 0.9);
+      --bg: #0f172a;
+      --card: #1e293b;
+      --display: #06d6a0;
+      --btn: #334155;
+      --btn-hover: #475569;
+      --op: #7c3aed;
+      --eq: #06b6d4;
+      --clear: #ef4444;
+      --sci-trig: #8b5cf6;
+      --sci-hyp: #a78bfa;
+      --sci-log: #3b82f6;
+      --sci-exp: #10b981;
+      --sci-const: #ec4899;
+      --sci-other: #f59e0b;
+      --body-bg: linear-gradient(135deg, #7c3aed, #06b6d4);
     }
 
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      font-family: 'Orbitron', monospace;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+      background: var(--body-bg);
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
       transition: background 0.4s ease;
+      padding: 10px;
     }
 
-    .calculator {
-      width: 100%;
-      max-width: 480px;
-      background: rgba(20, 20, 40, 0.85);
-      border-radius: 24px;
+    .calc {
+      background: var(--bg);
       padding: 24px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      margin-bottom: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      transition: all 0.3s ease;
     }
 
-    .controls {
+    .header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 18px;
     }
 
-    .theme-toggle {
-      background: var(--btn-sci);
-      color: white;
+    .menu-btn {
+      background: var(--btn);
       border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-family: 'Orbitron', monospace;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: transform 0.2s;
+      padding: 0;
     }
 
-    .theme-toggle:hover {
-      transform: translateY(-2px);
+    .menu-btn span {
+      width: 22px;
+      height: 3px;
+      background: white;
+      margin: 2px 0;
+      border-radius: 2px;
     }
 
     .display {
-      background: var(--screen-bg);
-      color: var(--screen-text);
-      padding: 22px;
-      font-size: 1.8rem;
-      text-align: right;
+      background: var(--card);
+      color: var(--display);
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      padding: 18px;
       border-radius: 16px;
-      margin-bottom: 20px;
-      min-height: 80px;
-      word-break: break-all;
-      box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.5);
-      text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+      text-align: right;
+      overflow-x: auto;
+      white-space: nowrap;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      box-shadow: inset 0 0 12px rgba(6, 214, 160, 0.2);
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    button {
+      padding: 12px 8px;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: var(--btn);
+      color: white;
+      transition: all 0.2s ease;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    }
+
+    .op { background: var(--op); }
+    .eq { background: var(--eq); }
+    .clear { background: var(--clear); }
+    .sci-trig { background: var(--sci-trig); }
+    .sci-hyp { background: var(--sci-hyp); }
+    .sci-log { background: var(--sci-log); }
+    .sci-exp { background: var(--sci-exp); }
+    .sci-const { background: var(--sci-const); }
+    .sci-other { background: var(--sci-other); }
+
+    /* === Panel de Configuración === */
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 320px;
+      height: 100vh;
+      background: var(--bg);
+      padding: 30px 20px;
+      box-shadow: 4px 0 25px rgba(0,0,0,0.6);
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      overflow-y: auto;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .settings-panel.active {
+      left: 0;
+    }
+
+    .close-settings {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: #334155;
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .settings-title {
+      color: white;
+      font-size: 1.6rem;
+      margin-bottom: 25px;
+      text-align: center;
       font-weight: 700;
     }
 
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+    .setting-group {
+      margin-bottom: 25px;
     }
 
-    .btn {
-      padding: 14px 0;
-      font-size: 1rem;
-      background: var(--btn-basic);
-      color: white;
-      border: none;
-      border-radius: 14px;
+    .setting-group h3 {
+      color: #a5b4fc;
+      margin-bottom: 14px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .color-option, .bg-option {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      margin: 5px;
       cursor: pointer;
-      font-family: 'Orbitron', monospace;
-      font-weight: 600;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      transition: all 0.15s ease;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
     }
 
-    .btn.sci {
-      background: var(--btn-sci);
+    .color-option:hover, .bg-option:hover {
+      transform: scale(1.1);
     }
 
-    .btn.special {
-      background: var(--btn-special);
+    .color-option.active, .bg-option.active {
+      border-color: white;
+      transform: scale(1.15);
     }
 
-    .btn.equals {
-      background: var(--btn-equals);
-      color: #000;
-      font-weight: bold;
+    .font-size-slider {
+      width: 100%;
+      margin-top: 10px;
+      height: 8px;
+      -webkit-appearance: none;
+      background: #334155;
+      border-radius: 4px;
+      outline: none;
     }
 
-    .btn:hover {
-      transform: scale(1.03);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    .font-size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--eq);
+      cursor: pointer;
     }
 
-    .btn:active {
-      transform: scale(0.98);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-
-    .history-toggle {
+    /* === Perfil === */
+    .profile-info {
+      background: var(--card);
+      padding: 22px;
+      border-radius: 18px;
+      margin-top: 20px;
       text-align: center;
-      margin-top: 16px;
-      color: #aaa;
-      font-size: 0.95rem;
-      cursor: pointer;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .profile-info h3 {
+      color: var(--display);
+      margin: 0 0 12px 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .profile-info p {
+      color: #cbd5e1;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #34d399;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-top: 8px;
+    }
+
+    .whatsapp-link:hover {
+      color: #10b981;
       text-decoration: underline;
     }
 
-    #historyList {
-      max-height: 120px;
-      overflow-y: auto;
-      background: var(--history-bg);
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 10px;
-      font-size: 0.9rem;
-      display: none;
-      font-family: 'Orbitron', monospace;
-    }
-
-    .credits-box {
-      width: 100%;
-      max-width: 480px;
-      background: var(--credits-bg);
-      padding: 20px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 204, 0, 0.3);
-    }
-
     .credits {
-      font-family: 'Pacifico', cursive;
-      font-size: 1.7rem;
-      color: #ffcc00;
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-      animation: glow 2s infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 8px #fff, 0 0 15px #ffcc00; }
-      to { text-shadow: 0 0 15px #fff, 0 0 25px #ffcc00, 0 0 35px #ffcc00; }
-    }
-
-    @media (max-width: 500px) {
-      .btn { font-size: 0.9rem; padding: 12px 0; }
-      .display { font-size: 1.5rem; }
+      text-align: center;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.85rem;
+      margin-top: 16px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.4px;
     }
   </style>
 </head>
 <body>
-  <!-- Calculadora -->
-  <div class="calculator">
-    <div class="controls">
-      <button class="theme-toggle" id="themeBtn">🌙 Modo Oscuro</button>
+  <!-- Panel de Configuración -->
+  <div class="settings-panel" id="settingsPanel">
+    <button class="close-settings" id="closeSettings">✕</button>
+    <h2 class="settings-title">⚙️ Configuración</h2>
+
+    <div class="setting-group">
+      <h3>🎨 Tema de colores</h3>
+      <div>
+        <div class="color-option" style="background: linear-gradient(135deg, #7c3aed, #06b6d4);" data-theme="default"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #0ea5e9, #8b5cf6);" data-theme="blue-purple"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #10b981, #f59e0b);" data-theme="green-amber"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #ef4444, #f97316);" data-theme="red-orange"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #000, #333);" data-theme="dark"></div>
+      </div>
     </div>
-    <div class="display" id="display">0</div>
-    <div class="buttons" id="buttons"></div>
-    <div class="history-toggle" id="toggleHistory">📜 Ver historial</div>
-    <div id="historyList"></div>
+
+    <div class="setting-group">
+      <h3>🖼️ Fondo de pantalla</h3>
+      <div>
+        <div class="bg-option" style="background: linear-gradient(135deg, #7c3aed, #06b6d4);" data-bg="1"></div>
+        <div class="bg-option" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);" data-bg="2"></div>
+        <div class="bg-option" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9);" data-bg="3"></div>
+        <div class="bg-option" style="background: linear-gradient(135deg, #10b981, #34d399);" data-bg="4"></div>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <h3>🔤 Tamaño del display</h3>
+      <input type="range" min="1.4" max="2.4" step="0.1" value="1.8" class="font-size-slider" id="fontSizeSlider">
+    </div>
+
+    <div class="profile-info">
+      <h3>👨‍💻 AnthZz Berrocal BerMatMods</h3>
+      <p>Programador creativo especializado en crear detalles virtuales únicos y experiencias digitales memorables.</p>
+      <a href="https://wa.me/51930569195" target="_blank" class="whatsapp-link">
+        💬 Contactar Por WhatsApp
+      </a>
+    </div>
   </div>
 
-  <!-- Créditos en cuadro -->
-  <div class="credits-box">
+  <!-- Calculadora -->
+  <div class="calc" id="calculator">
+    <div class="header">
+      <button class="menu-btn" id="menuBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div class="display" id="display">0</div>
+    <div class="keys">
+      <button class="clear">C</button>
+      <button class="sci-const">π</button>
+      <button class="sci-const">e</button>
+      <button class="op">(</button>
+      <button class="op">)</button>
+
+      <button class="sci-trig">sin</button>
+      <button class="sci-trig">cos</button>
+      <button class="sci-trig">tan</button>
+      <button class="sci-trig">asin</button>
+      <button class="sci-trig">acos</button>
+
+      <button class="sci-hyp">sinh</button>
+      <button class="sci-hyp">cosh</button>
+      <button class="sci-hyp">tanh</button>
+      <button class="sci-trig">atan</button>
+      <button class="op">/</button>
+
+      <button class="sci-log">log</button>
+      <button class="sci-log">ln</button>
+      <button class="sci-exp">eˣ</button>
+      <button class="sci-exp">10ˣ</button>
+      <button class="op">*</button>
+
+      <button class="sci-other">x²</button>
+      <button class="sci-other">xʸ</button>
+      <button class="sci-other">√</button>
+      <button class="sci-other">!</button>
+      <button class="op">-</button>
+
+      <button class="sci-other">1/x</button>
+      <button class="sci-other">|x|</button>
+      <button class="sci-other">⌊x⌋</button>
+      <button class="sci-other">⌈x⌉</button>
+      <button class="op">+</button>
+
+      <button class="sci-other">deg</button>
+      <button class="sci-other">rad</button>
+      <button class="sci-other">rand</button>
+      <button>7</button>
+      <button>8</button>
+
+      <button>9</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="eq">=</button>
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>0</button>
+      <button>.</button>
+    </div>
     <div class="credits">By AnthZz Berrocal BerMatMods</div>
   </div>
 
+  <!-- Sonidos -->
+  <audio id="clickSound" src="https://files.catbox.moe/deprpa.mp3" preload="auto"></audio>
+  <audio id="resultSound" src="https://files.catbox.moe/z9agnn.mp3" preload="auto"></audio>
+
   <script>
-    let currentInput = '0';
-    let previousInput = '';
-    let operation = null;
-    let resetScreen = false;
-    let history = [];
-    let darkMode = true;
+    // === SONIDOS ===
+    const clickSound = document.getElementById('clickSound');
+    const resultSound = document.getElementById('resultSound');
 
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play().catch(() => {});
+    }
+    function playResult() {
+      resultSound.currentTime = 0;
+      resultSound.play().catch(() => {});
+    }
+
+    // === CONFIGURACIÓN ===
+    const settingsPanel = document.getElementById('settingsPanel');
+    const menuBtn = document.getElementById('menuBtn');
+    const closeSettings = document.getElementById('closeSettings');
+    const colorOptions = document.querySelectorAll('.color-option');
+    const bgOptions = document.querySelectorAll('.bg-option');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const root = document.documentElement;
+    const body = document.body;
     const display = document.getElementById('display');
-    const buttonsContainer = document.getElementById('buttons');
-    const themeBtn = document.getElementById('themeBtn');
-    const toggleHistory = document.getElementById('toggleHistory');
-    const historyList = document.getElementById('historyList');
 
-    // Todos los botones en una sola vista
-    const allButtons = [
-      'C', '⌫', '±', '%', '÷',
-      'sin', 'cos', 'tan', 'log', 'ln',
-      '7', '8', '9', '×', 'x²',
-      '4', '5', '6', '−', 'x³',
-      '1', '2', '3', '+', '√',
-      '0', '.', '(', ')', '=',
-      'π', 'e', '!', '10ˣ', 'eˣ',
-      '1/x', 'xʸ', 'abs', 'rad', 'deg'
-    ];
-
-    const sciFunc = {
-      'sin': x => Math.sin(x * Math.PI / 180),
-      'cos': x => Math.cos(x * Math.PI / 180),
-      'tan': x => Math.tan(x * Math.PI / 180),
-      'log': x => x > 0 ? Math.log10(x) : new Error('log(x) indefinido'),
-      'ln': x => x > 0 ? Math.log(x) : new Error('ln(x) indefinido'),
-      '√': x => x >= 0 ? Math.sqrt(x) : new Error('√ negativa'),
-      'x²': x => x * x,
-      'x³': x => x * x * x,
-      '!': x => {
-        x = Math.floor(x);
-        if (x < 0) return new Error('Factorial inválido');
-        let r = 1;
-        for (let i = 2; i <= x; i++) r *= i;
-        return r;
-      },
-      '10ˣ': x => Math.pow(10, x),
-      'eˣ': x => Math.exp(x),
-      '1/x': x => x !== 0 ? 1 / x : new Error('1/0 indefinido'),
-      'abs': x => Math.abs(x),
-      'π': () => Math.PI,
-      'e': () => Math.E
+    const THEMES = {
+      default: { bg: '#0f172a', card: '#1e293b', display: '#06d6a0', bodyBg: 'linear-gradient(135deg, #7c3aed, #06b6d4)' },
+      'blue-purple': { bg: '#0f172a', card: '#1e293b', display: '#60a5fa', bodyBg: 'linear-gradient(135deg, #0ea5e9, #8b5cf6)' },
+      'green-amber': { bg: '#0f172a', card: '#1e293b', display: '#34d399', bodyBg: 'linear-gradient(135deg, #10b981, #f59e0b)' },
+      'red-orange': { bg: '#0f172a', card: '#1e293b', display: '#f87171', bodyBg: 'linear-gradient(135deg, #ef4444, #f97316)' },
+      dark: { bg: '#000000', card: '#111827', display: '#818cf8', bodyBg: 'linear-gradient(135deg, #000, #333)' }
     };
 
-    function toRadians(deg) { return deg * Math.PI / 180; }
-    function toDegrees(rad) { return rad * 180 / Math.PI; }
+    const BACKGROUNDS = {
+      '1': 'linear-gradient(135deg, #7c3aed, #06b6d4)',
+      '2': 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+      '3': 'linear-gradient(135deg, #06b6d4, #0ea5e9)',
+      '4': 'linear-gradient(135deg, #10b981, #34d399)'
+    };
 
-    // Renderizar todos los botones
-    function renderButtons() {
-      buttonsContainer.innerHTML = '';
-      allButtons.forEach(label => {
-        const btn = document.createElement('button');
-        btn.textContent = label;
-        btn.className = 'btn';
-        if (['sin','cos','tan','log','ln','x²','x³','√','!','10ˣ','eˣ','1/x','xʸ','abs','π','e','rad','deg'].includes(label)) {
-          btn.classList.add('sci');
-        }
-        if (['C', '⌫'].includes(label)) btn.classList.add('special');
-        if (label === '=') btn.classList.add('equals');
-
-        btn.addEventListener('click', () => handleInput(label));
-        buttonsContainer.appendChild(btn);
-      });
+    function applyTheme(themeKey) {
+      const t = THEMES[themeKey] || THEMES.default;
+      root.style.setProperty('--bg', t.bg);
+      root.style.setProperty('--card', t.card);
+      root.style.setProperty('--display', t.display);
+      root.style.setProperty('--body-bg', t.bodyBg);
     }
 
-    function handleInput(value) {
-      if (value === 'C') {
-        resetAll();
-      } else if (value === '⌫') {
-        currentInput = currentInput.length > 1 ? currentInput.slice(0, -1) : '0';
-      } else if (value === '±') {
-        currentInput = currentInput.startsWith('-') ? currentInput.slice(1) : '-' + currentInput;
-      } else if (value === '%') {
-        currentInput = String(parseFloat(currentInput) / 100);
-        resetScreen = true;
-      } else if (['+', '−', '×', '÷', 'xʸ'].includes(value)) {
-        if (operation !== null) compute();
-        previousInput = currentInput;
-        operation = value;
-        resetScreen = true;
-      } else if (value === '=') {
-        compute();
-      } else if (value === 'π' || value === 'e') {
-        currentInput = String(sciFunc[value]());
-        resetScreen = true;
-      } else if (value === 'rad') {
-        currentInput = String(toRadians(parseFloat(currentInput)));
-        resetScreen = true;
-      } else if (value === 'deg') {
-        currentInput = String(toDegrees(parseFloat(currentInput)));
-        resetScreen = true;
-      } else if (sciFunc[value]) {
-        const num = parseFloat(currentInput);
-        if (isNaN(num)) {
-          showError('Entrada inválida');
-          return;
-        }
-        const result = sciFunc[value](num);
-        if (result instanceof Error) {
-          showError(result.message);
-        } else {
-          addToHistory(`${value}(${num}) = ${formatResult(result)}`);
-          currentInput = String(result);
-          resetScreen = true;
-        }
-      } else {
-        if (resetScreen) {
-          currentInput = value;
-          resetScreen = false;
-        } else {
-          currentInput = currentInput === '0' && value !== '.' ? value : currentInput + value;
-        }
-      }
-      updateDisplay();
+    function applyBackground(bgKey) {
+      body.style.background = BACKGROUNDS[bgKey] || BACKGROUNDS['1'];
     }
 
-    function compute() {
-      if (operation === null) return;
-      const prev = parseFloat(previousInput);
-      const curr = parseFloat(currentInput);
-      if (isNaN(prev) || isNaN(curr)) {
-        showError('Entrada inválida');
-        return;
-      }
-
-      let result;
-      try {
-        switch (operation) {
-          case '+': result = prev + curr; break;
-          case '−': result = prev - curr; break;
-          case '×': result = prev * curr; break;
-          case '÷':
-            if (curr === 0) throw new Error('División por cero');
-            result = prev / curr;
-            break;
-          case 'xʸ': result = Math.pow(prev, curr); break;
-          default: result = NaN;
-        }
-      } catch (e) {
-        showError(e.message);
-        return;
-      }
-
-      if (isNaN(result)) {
-        showError('Operación inválida');
-        return;
-      }
-
-      addToHistory(`${previousInput} ${operation} ${currentInput} = ${formatResult(result)}`);
-      currentInput = String(result);
-      operation = null;
-      previousInput = '';
-      resetScreen = true;
-      updateDisplay();
+    function saveSettings(settings) {
+      localStorage.setItem('calcSettings_v2', JSON.stringify(settings));
     }
 
-    function formatResult(num) {
-      if (Math.abs(num) > 1e10 || (Math.abs(num) < 1e-6 && num !== 0)) {
-        return num.toExponential(6);
-      }
-      return parseFloat(num.toFixed(10)).toString();
-    }
+    function loadSettings() {
+      const saved = JSON.parse(localStorage.getItem('calcSettings_v2')) || {
+        theme: 'default',
+        bg: '1',
+        fontSize: 1.8
+      };
 
-    function showError(msg) {
-      display.textContent = 'Error';
-      display.style.color = 'var(--error)';
-      setTimeout(() => {
-        resetAll();
-        updateDisplay();
-      }, 1800);
-    }
+      // Aplicar tema
+      applyTheme(saved.theme);
+      document.querySelectorAll('.color-option').forEach(el => el.classList.remove('active'));
+      const themeEl = document.querySelector(`.color-option[data-theme="${saved.theme}"]`);
+      if (themeEl) themeEl.classList.add('active');
 
-    function resetAll() {
-      currentInput = '0';
-      previousInput = '';
-      operation = null;
-      resetScreen = false;
-    }
+      // Aplicar fondo
+      applyBackground(saved.bg);
+      document.querySelectorAll('.bg-option').forEach(el => el.classList.remove('active'));
+      const bgEl = document.querySelector(`.bg-option[data-bg="${saved.bg}"]`);
+      if (bgEl) bgEl.classList.add('active');
 
-    function updateDisplay() {
-      let text = currentInput;
-      if (operation !== null && !resetScreen) {
-        text = `${previousInput} ${operation} ${currentInput}`;
-      }
-      display.textContent = text;
-      display.style.color = 'var(--screen-text)';
-    }
-
-    function addToHistory(entry) {
-      history.unshift(entry);
-      if (history.length > 12) history.pop();
-      if (historyList.style.display === 'block') renderHistory();
-    }
-
-    function renderHistory() {
-      historyList.innerHTML = '';
-      history.forEach(entry => {
-        const div = document.createElement('div');
-        div.textContent = entry;
-        div.style.padding = '4px 0';
-        historyList.appendChild(div);
-      });
+      // Aplicar tamaño
+      fontSizeSlider.value = saved.fontSize;
+      display.style.fontSize = `${saved.fontSize}rem`;
     }
 
     // Eventos
-    themeBtn.addEventListener('click', () => {
-      darkMode = !darkMode;
-      document.body.classList.toggle('light-mode', !darkMode);
-      themeBtn.textContent = darkMode ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+    menuBtn.addEventListener('click', () => {
+      settingsPanel.classList.add('active');
+      playClick();
     });
 
-    toggleHistory.addEventListener('click', () => {
-      const show = historyList.style.display !== 'block';
-      historyList.style.display = show ? 'block' : 'none';
-      toggleHistory.textContent = show ? '⬆️ Ocultar historial' : '📜 Ver historial';
-      if (show) renderHistory();
+    closeSettings.addEventListener('click', () => {
+      settingsPanel.classList.remove('active');
+      playClick();
     });
 
-    document.addEventListener('keydown', e => {
-      const keyMap = {
-        'Enter': '=', 'Escape': 'C', 'Backspace': '⌫',
-        '+': '+', '-': '−', '*': '×', '/': '÷', '%': '%',
-        '(': '(', ')': ')', '.': '.'
-      };
-      if (keyMap[e.key]) handleInput(keyMap[e.key]);
-      else if (/^\d$/.test(e.key)) handleInput(e.key);
+    colorOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        colorOptions.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        const theme = opt.dataset.theme;
+        applyTheme(theme);
+        const current = JSON.parse(localStorage.getItem('calcSettings_v2') || '{}');
+        saveSettings({ ...current, theme });
+        playClick();
+      });
+    });
+
+    bgOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        bgOptions.forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        const bg = opt.dataset.bg;
+        applyBackground(bg);
+        const current = JSON.parse(localStorage.getItem('calcSettings_v2') || '{}');
+        saveSettings({ ...current, bg });
+        playClick();
+      });
+    });
+
+    fontSizeSlider.addEventListener('input', () => {
+      const size = parseFloat(fontSizeSlider.value);
+      display.style.fontSize = `${size}rem`;
+      const current = JSON.parse(localStorage.getItem('calcSettings_v2') || '{}');
+      saveSettings({ ...current, fontSize: size });
+    });
+
+    // === MOTOR DE CÁLCULO ===
+    let current = '';
+
+    function factorial(n) {
+      if (n < 0 || !Number.isInteger(n)) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let res = 1;
+      for (let i = 2; i <= n; i++) res *= i;
+      return res;
+    }
+    function deg(x) { return x * 180 / Math.PI; }
+    function rad(x) { return x * Math.PI / 180; }
+
+    function evaluate(expr) {
+      let processed = expr
+        .replace(/π/g, 'Math.PI')
+        .replace(/e(?![\w])/g, 'Math.E')
+        .replace(/√\(/g, 'Math.sqrt(')
+        .replace(/√([0-9.]+)/g, 'Math.sqrt($1)')
+        .replace(/x²/g, '**2')
+        .replace(/xʸ/g, '**')
+        .replace(/\^/g, '**')
+        .replace(/sin\(/g, 'Math.sin(')
+        .replace(/cos\(/g, 'Math.cos(')
+        .replace(/tan\(/g, 'Math.tan(')
+        .replace(/asin\(/g, 'Math.asin(')
+        .replace(/acos\(/g, 'Math.acos(')
+        .replace(/atan\(/g, 'Math.atan(')
+        .replace(/sinh\(/g, 'Math.sinh(')
+        .replace(/cosh\(/g, 'Math.cosh(')
+        .replace(/tanh\(/g, 'Math.tanh(')
+        .replace(/log\(/g, 'Math.log10(')
+        .replace(/ln\(/g, 'Math.log(')
+        .replace(/eˣ\(/g, 'Math.exp(')
+        .replace(/10ˣ\(/g, 'tenPow(')
+        .replace(/1\/x/g, 'inv(')
+        .replace(/\|x\|/g, 'Math.abs(')
+        .replace(/⌊x⌋/g, 'Math.floor(')
+        .replace(/⌈x⌉/g, 'Math.ceil(')
+        .replace(/deg\(/g, 'deg(')
+        .replace(/rad\(/g, 'rad(')
+        .replace(/rand/g, 'Math.random()');
+      processed = processed.replace(/([0-9.]+)!/g, (_, num) => `factorial(${num})`);
+
+      const tenPow = x => Math.pow(10, x);
+      const inv = x => 1 / x;
+
+      try {
+        return Function('tenPow', 'inv', 'deg', 'rad', 'factorial',
+          `'use strict'; return (${processed})`
+        )(tenPow, inv, deg, rad, factorial);
+      } catch (e) {
+        throw new Error('Calc error');
+      }
+    }
+
+    document.querySelectorAll('button').forEach(btn => {
+      if ([menuBtn, closeSettings].includes(btn)) return;
+      btn.addEventListener('click', () => {
+        playClick();
+        const val = btn.textContent;
+
+        if (btn.classList.contains('clear')) {
+          current = '';
+          display.textContent = '0';
+        } else if (btn.classList.contains('eq')) {
+          playResult();
+          try {
+            if (!current.trim()) {
+              display.textContent = '0';
+              return;
+            }
+            let result = evaluate(current);
+            if (typeof result !== 'number' || !isFinite(result)) throw new Error();
+            result = parseFloat(result.toPrecision(12));
+            current = result.toString();
+            display.textContent = current;
+          } catch (e) {
+            display.textContent = 'Error';
+            current = '';
+          }
+        } else {
+          let append = val;
+          const funcNames = ['sin','cos','tan','asin','acos','atan','sinh','cosh','tanh','log','ln','eˣ','10ˣ','deg','rad','√'];
+          if (funcNames.includes(val)) {
+            append = val + '(';
+          } else if (val === 'x²') append = 'x²';
+          else if (val === 'xʸ') append = 'xʸ';
+          else if (val === '!') append = '!';
+          else if (val === '1/x') append = '1/x';
+          else if (val === '|x|') append = '|x|';
+          else if (val === '⌊x⌋') append = '⌊x⌋';
+          else if (val === '⌈x⌉') append = '⌈x⌉';
+
+          current += append;
+          display.textContent = current;
+        }
+      });
     });
 
     // Iniciar
-    renderButtons();
-    updateDisplay();
+    loadSettings();
   </script>
 </body>
 </html>
